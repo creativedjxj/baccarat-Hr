@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>바카라 수동입력 로드맵</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: 'Arial', sans-serif;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      margin-top: 40px;
+    }
+    .btn {
+      padding: 12px 24px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      color: white;
+    }
+    .player { background-color: #3498db; }
+    .banker { background-color: #e74c3c; }
+    .tie { background-color: #2ecc71; }
+    .reset { background-color: #555; }
+    .result-btn { background-color: purple; margin-top: 20px; }
+    .circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: inline-block;
+      margin: 5px;
+    }
+    .blue { background-color: #3498db; }
+    .red { background-color: #e74c3c; }
+    .green { background-color: #2ecc71; }
+    #probabilities {
+      margin-top: 30px;
+      font-size: 18px;
+    }
+    footer {
+      margin-top: 50px;
+      font-size: 14px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div id="login-screen">
+    <h1>비밀번호를 입력하세요</h1>
+    <input type="password" id="password-input" placeholder="비밀번호" />
+    <br><br>
+    <button onclick="checkPassword()">입력</button>
+    <footer>
+      제작자 Hr
+    </footer>
+  </div>
+
+  <div id="main-app" style="display:none;">
+    <h1>바카라 수동입력 로드맵</h1>
+    <button class="btn player" onclick="addResult('P')">플레이어</button>
+    <button class="btn banker" onclick="addResult('B')">뱅커</button>
+    <button class="btn tie" onclick="addResult('T')">타이</button>
+    <button class="btn reset" onclick="resetResults()">초기화</button>
+    <br>
+    <button class="btn result-btn" onclick="showProbabilities()">다음 결과 보기</button>
+
+    <div id="results" style="margin-top:30px;"></div>
+
+    <div id="probabilities"></div>
+
+    <footer>
+      건승하세요<br>
+      제작자 Hr
+    </footer>
+  </div>
+
+  <script>
+    const password = "bcr600";
+    function checkPassword() {
+      const input = document.getElementById("password-input").value;
+      if (input === password) {
+        document.getElementById("login-screen").style.display = "none";
+        document.getElementById("main-app").style.display = "block";
+      } else {
+        alert("비밀번호가 틀렸습니다.");
+      }
+    }
+
+    let results = [];
+
+    function addResult(result) {
+      results.push(result);
+      updateDisplay();
+      showProbabilities(); // 자동 업데이트
+    }
+
+    function resetResults() {
+      results = [];
+      updateDisplay();
+      document.getElementById("probabilities").innerHTML = "";
+    }
+
+    function updateDisplay() {
+      const container = document.getElementById("results");
+      container.innerHTML = "";
+      results.forEach(r => {
+        const circle = document.createElement("span");
+        circle.classList.add("circle");
+        if (r === "P") circle.classList.add("blue");
+        else if (r === "B") circle.classList.add("red");
+        else if (r === "T") circle.classList.add("green");
+        container.appendChild(circle);
+      });
+    }
+
+    function showProbabilities() {
+      const counts = { P: 0, B: 0, T: 0 };
+      results.forEach(r => counts[r]++);
+      const total = results.length || 1; // 나누기 방지
+
+      const pProb = ((counts.P / total) * 100).toFixed(1);
+      const bProb = ((counts.B / total) * 100).toFixed(1);
+      const tProb = ((counts.T / total) * 100).toFixed(1);
+
+      document.getElementById("probabilities").innerHTML = `
+        <p>📊 다음 결과 예측 확률</p>
+        <p>플레이어: <strong>${pProb}%</strong> | 뱅커: <strong>${bProb}%</strong> | 타이: <strong>${tProb}%</strong></p>
+      `;
+    }
+  </script>
+</body>
+</html>
